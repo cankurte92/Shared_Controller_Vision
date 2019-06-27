@@ -1,0 +1,10 @@
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\bin\Debug\ControllerVision.exe.config
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\bin\Debug\ControllerVision.exe
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\bin\Debug\ControllerVision.pdb
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.csprojAssemblyReference.cache
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.Form1.resources
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.Properties.Resources.resources
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.csproj.GenerateResource.cache
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.csproj.CoreCompileInputs.cache
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.exe
+C:\Users\u20g90\source\repos\ControllerVision\ControllerVision\obj\Debug\ControllerVision.pdb
