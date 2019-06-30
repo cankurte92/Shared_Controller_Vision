@@ -135,6 +135,8 @@
             this.label9 = new System.Windows.Forms.Label();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.HorizonInBox = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -388,18 +390,18 @@
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(244, 238);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(25, 17);
+            this.label19.Size = new System.Drawing.Size(24, 17);
             this.label19.TabIndex = 26;
-            this.label19.Text = "B :";
+            this.label19.Text = "b :";
             // 
             // label20
             // 
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(244, 264);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(25, 17);
+            this.label20.Size = new System.Drawing.Size(23, 17);
             this.label20.TabIndex = 27;
-            this.label20.Text = "C :";
+            this.label20.Text = "c :";
             // 
             // label21
             // 
@@ -902,7 +904,7 @@
             // comboBoxPIDs
             // 
             this.comboBoxPIDs.FormattingEnabled = true;
-            this.comboBoxPIDs.Location = new System.Drawing.Point(281, 67);
+            this.comboBoxPIDs.Location = new System.Drawing.Point(621, 72);
             this.comboBoxPIDs.Name = "comboBoxPIDs";
             this.comboBoxPIDs.Size = new System.Drawing.Size(164, 24);
             this.comboBoxPIDs.TabIndex = 66;
@@ -939,7 +941,7 @@
             // PlotPIDlist
             // 
             this.PlotPIDlist.FormattingEnabled = true;
-            this.PlotPIDlist.Location = new System.Drawing.Point(1077, 427);
+            this.PlotPIDlist.Location = new System.Drawing.Point(1165, 429);
             this.PlotPIDlist.Name = "PlotPIDlist";
             this.PlotPIDlist.Size = new System.Drawing.Size(157, 24);
             this.PlotPIDlist.TabIndex = 73;
@@ -1043,11 +1045,33 @@
             this.HorizonInBox.TabIndex = 83;
             this.HorizonInBox.Text = "20.0";
             // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.Location = new System.Drawing.Point(469, 74);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(146, 17);
+            this.label22.TabIndex = 84;
+            this.label22.Text = "Manage Controller:";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label23.Location = new System.Drawing.Point(1118, 432);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(41, 17);
+            this.label23.TabIndex = 85;
+            this.label23.Text = "Plot:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1539, 837);
+            this.Controls.Add(this.label23);
+            this.Controls.Add(this.label22);
             this.Controls.Add(this.HorizonInBox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.PlotButton);
@@ -1257,6 +1281,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.TextBox HorizonInBox;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label23;
     }
 }
 

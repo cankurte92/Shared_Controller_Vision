@@ -1,8 +1,6 @@
 #include "CONTROL.h"
 #include <Arduino.h>
 
-
-
 incrementalPID::incrementalPID()
 {
 }
@@ -42,7 +40,7 @@ void incrementalPID::calculate_CS()
 void incrementalPID::communicateControllerVision( String ControllerName )
 	//This function communicates with ControllerVision tool
 {	
-	//Read serial buffer and split by ','
+	//Read serial buffer line and split by ','
 if (Serial.available() > 0) 
 	{
 		inChar = Serial.read();

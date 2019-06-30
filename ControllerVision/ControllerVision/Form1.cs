@@ -18,9 +18,8 @@ namespace ControllerVision
         string[] PortNames = SerialPort.GetPortNames(); //Get all connected port names
         string SerialMessage = "0"; //initialize RX serial message
         int counter = 0; // timer counter
-        double TimeInSec = 0; //timer time in Sec
-        UInt16 SerialPeriod; // it is used as periad of update data in the logging files and chart
-        
+        double TimeInSec = 0; //elapsed time in Sec
+        UInt16 SerialPeriod; // it is used as periad of update data in the logging files and chart        
         List<PID> PIDs = new List<PID>(); // list of PID controllers which sent by Arduino
         List<String> PIDnames = new List<String>(); // list of PID controller names which sent by Arduino
         string ChosenPID; //the PID controller name chosen by user in the "comboBoxPIDs"
@@ -28,30 +27,29 @@ namespace ControllerVision
         string PlotPID; //the PID controller name chosen by user in the "PlotPIDlist". This is used to select PID which shall be plotted.
         int PlotPIDindex = 0; //index of the PID controller name chosen by user in the "PlotPIDlist". This is used to select PID which shall be plotted.
         Boolean IsAnyPIDSelectedByUser = false; //state: any PID is selected by user to manipulate
-        //StreamWriter file = new System.IO.StreamWriter(@"C:\Users\u20g90\Documents\ControllerVisioLogs\Logs.txt", true);
         float chartHorizon = 20;
 
         public Form1()
-        {
-            
+        {           
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e) //when form loaded
         {
-          
-            foreach (string port in PortNames)
+          // Add Port names to Portname List
+            foreach (string port in PortNames) 
             {
                 SerialPortBox.Items.Add(port);
                 SerialPortBox.SelectedIndex = 0;
             }
+            // Add baud rate options to Baud Rate List
             BaudRateBox.Items.Add("4800");
             BaudRateBox.Items.Add("9600");
             BaudRateBox.Items.Add("115200");
             BaudRateBox.SelectedIndex = 2;
             ConnectionStatus.Text = "Port Status : Not Connected";
 
-            
+            // init Start/Stop Button
             if (serialPort1.IsOpen==false)
             {
                 buttonStrtStp.Text = "Start";
@@ -59,16 +57,23 @@ namespace ControllerVision
             }
             else
             { serialPort1.Close(); }
-
+            //init folder path
             FolderPath.Text = @"C:\Users\Default\Documents\ControllerVision";
         }
         
-
+        // Start/Stop Button  
         private void buttonStrtStp_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(FolderPath.Text))
-            { Directory.CreateDirectory(FolderPath.Text); }
-
+            try
+            {
+                if (!Directory.Exists(FolderPath.Text))
+                { Directory.CreateDirectory(FolderPath.Text); }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
             if (serialPort1.IsOpen == false)
             {
                 if (SerialPortBox.Text == "")
@@ -90,13 +95,13 @@ namespace ControllerVision
                     }
                     else
                     {
-                        SerialPeriod = 1000;
-                        SerialPeriodInBox.Text = "1000";
+                        SerialPeriod = 100;
+                        SerialPeriodInBox.Text = "100";
                         timer1.Interval = SerialPeriod;
                         MessageBox.Show("Serial Communication Period Must Be Greater Than 0");
                     }
                     timer1.Start();
-
+                    //Reset Chart
                     chart1.Series[0].Points.Clear();
                     chart1.Series[1].Points.Clear();
                     chart1.Series[2].Points.Clear();
@@ -110,6 +115,7 @@ namespace ControllerVision
                     label8.Visible = false;
                     MeasFilePathBox.Visible = false;
                     PlotButton.Visible = false;
+                    chartHorizon = Convert.ToSingle(HorizonInBox.Text);
 
                 }
                 catch (Exception ex)
@@ -117,7 +123,7 @@ namespace ControllerVision
                     MessageBox.Show("Connection Failed\n" + ex.Message);
                     throw;
                 }
-                chartHorizon = Convert.ToSingle(HorizonInBox.Text);
+        
 
             }
             else
@@ -196,7 +202,7 @@ namespace ControllerVision
                         labelFm.Text = PIDs.ElementAt(ChosenPIDindex).Fm;
                         
 
-
+                //Record PID values to file {Time, SP, PV, CS, HI, LO, TR, TS, Fp, Fm, CSmax, CSmin, K, Ti, Td, N, b, c, Ts}
 
                 foreach (PID ctrl in PIDs)
                 {
@@ -209,23 +215,24 @@ namespace ControllerVision
 
                 }
 
-                //Graph Operations
-
-                if ((chart1.ChartAreas[0].AxisX.Maximum - chart1.ChartAreas[0].AxisX.Minimum) > chartHorizon)
+                //Plot chart
+                try
                 {
-                    chart1.ChartAreas[0].AxisX.Minimum = chart1.ChartAreas[0].AxisX.Maximum- chartHorizon;
-                    chart1.ChartAreas[0].AxisX.Interval = 1;
-                    try
+                    if ((chart1.ChartAreas[0].AxisX.Maximum - chart1.ChartAreas[0].AxisX.Minimum) > chartHorizon)
                     {
-                        chart1.Series[0].Points.RemoveAt(1);
-                        chart1.Series[1].Points.RemoveAt(1);
-                        chart1.Series[2].Points.RemoveAt(1);
-                        chart1.Series[3].Points.RemoveAt(1);
-                        chart1.Series[4].Points.RemoveAt(1);
-                        chart1.ChartAreas[0].RecalculateAxesScale();
+                        chart1.ChartAreas[0].AxisX.Minimum = chart1.ChartAreas[0].AxisX.Maximum - chartHorizon;
+                        chart1.ChartAreas[0].AxisX.Interval = 1;
+                        try
+                        {
+                            chart1.Series[0].Points.RemoveAt(1);
+                            chart1.Series[1].Points.RemoveAt(1);
+                            chart1.Series[2].Points.RemoveAt(1);
+                            chart1.Series[3].Points.RemoveAt(1);
+                            chart1.Series[4].Points.RemoveAt(1);
+                            chart1.ChartAreas[0].RecalculateAxesScale();
+                        }
+                        catch {; }
                     }
-                    catch {; }
-                }
                     chart1.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
                     chart1.ChartAreas[0].AxisX.Maximum = TimeInSec;
 
@@ -240,17 +247,19 @@ namespace ControllerVision
                     if (LOcheck.Checked == true) { chart1.Series[4].Points.AddXY(Math.Round(counter * SerialPeriodinSec, 2), Convert.ToSingle(PIDs.ElementAt(PlotPIDindex).LO)); }
                     else { chart1.Series[4].Points.Clear(); }
 
-                chart1.Series[0].Color = Color.Blue;
-                chart1.Series[1].Color = Color.Red;
-                chart1.Series[2].Color = Color.Brown;
-                chart1.Series[3].Color = Color.DarkOrange;
-                chart1.Series[4].Color = Color.DarkTurquoise;
-                chart1.Series[0].BorderWidth = 5;
-                chart1.Series[1].BorderWidth = 5;
-                chart1.Series[2].BorderWidth = 5;
-                chart1.Series[3].BorderWidth = 5;
-                chart1.Series[4].BorderWidth = 5;
-                
+                    chart1.Series[0].Color = Color.Blue;
+                    chart1.Series[1].Color = Color.Red;
+                    chart1.Series[2].Color = Color.Brown;
+                    chart1.Series[3].Color = Color.DarkOrange;
+                    chart1.Series[4].Color = Color.DarkTurquoise;
+                    chart1.Series[0].BorderWidth = 5;
+                    chart1.Series[1].BorderWidth = 5;
+                    chart1.Series[2].BorderWidth = 5;
+                    chart1.Series[3].BorderWidth = 5;
+                    chart1.Series[4].BorderWidth = 5;
+                }
+                catch
+                {; }
 
             }
             counter++;
@@ -345,7 +354,7 @@ namespace ControllerVision
             {
 
                 SerialMessage = serialPort1.ReadLine();
-                // file.Write(SerialMessage); 
+                
                 string[] SplitMessage = SerialMessage.Split(',');
                 int lngt = SplitMessage.Length;
                 if ((SplitMessage[0]=="start")&&(SplitMessage[lngt-1].Contains("end")))
@@ -450,14 +459,8 @@ namespace ControllerVision
 
 
             }
-            catch (Exception ex)
+            catch 
             {
-                timer1.Stop();
-                MessageBox.Show(ex.Message);
-               /* //ConnectionStatus.Text = "Port Status : Not Connected";
-                //buttonStrtStp.Text = "Start";
-                //buttonStrtStp.ForeColor = Color.Green;
-               // throw; */
             }
 
         }
@@ -495,72 +498,83 @@ namespace ControllerVision
 
         private void PlotPIDlist_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PlotPID = PlotPIDlist.Text;
-            PlotPIDindex = PIDnames.IndexOf(PlotPID);
-            chart1.Series[0].Points.Clear();
-            chart1.Series[1].Points.Clear();
-            chart1.Series[2].Points.Clear();
-            chart1.Series[3].Points.Clear();
-            chart1.Series[4].Points.Clear();
-            chart1.ChartAreas[0].AxisX.Minimum = chart1.ChartAreas[0].AxisX.Maximum-SerialPeriod/1000.0;
+            try
+            {
+                PlotPID = PlotPIDlist.Text;
+                PlotPIDindex = PIDnames.IndexOf(PlotPID);
+                chart1.Series[0].Points.Clear();
+                chart1.Series[1].Points.Clear();
+                chart1.Series[2].Points.Clear();
+                chart1.Series[3].Points.Clear();
+                chart1.Series[4].Points.Clear();
+                chart1.ChartAreas[0].AxisX.Minimum = chart1.ChartAreas[0].AxisX.Maximum - SerialPeriod / 1000.0;
+            }
+            catch {; }
         }
 
         private void PlotButton_Click(object sender, EventArgs e)
         {
-            chart1.Series[0].Points.Clear();
-            chart1.Series[1].Points.Clear();
-            chart1.Series[2].Points.Clear();
-            chart1.Series[3].Points.Clear();
-            chart1.Series[4].Points.Clear();
-            chart1.Update();
-            chart1.ResetAutoValues();
-            
+            try
+                {
+                chart1.Series[0].Points.Clear();
+                chart1.Series[1].Points.Clear();
+                chart1.Series[2].Points.Clear();
+                chart1.Series[3].Points.Clear();
+                chart1.Series[4].Points.Clear();
+                chart1.Update();
+                chart1.ResetAutoValues();
+                }
+            catch {; }
 
             string[] Lines;
             string[] SplitLine;
             Boolean plotInited = true;
             Single axisMin=0;
             Single axisMax=1;
-
-            if (!File.Exists(MeasFilePathBox.Text))
-            { MessageBox.Show("Invalid Measurement File"); }
-            else
-            { 
-            Lines=File.ReadAllLines(MeasFilePathBox.Text);
-                foreach (string line in Lines)
+            try
+            {
+                if (!File.Exists(MeasFilePathBox.Text))
+                { MessageBox.Show("Invalid Measurement File"); }
+                else
                 {
-                    SplitLine = line.Split(',');
-                    if (SplitLine.Length == 19)
+                    Lines = File.ReadAllLines(MeasFilePathBox.Text);
+                    foreach (string line in Lines)
                     {
-                        if (plotInited)
+                        SplitLine = line.Split(',');
+                        if (SplitLine.Length == 19)
                         {
-                            axisMin = Convert.ToSingle(SplitLine[0]);
-                            plotInited = false;
+                            if (plotInited)
+                            {
+                                axisMin = Convert.ToSingle(SplitLine[0]);
+                                plotInited = false;
+                            }
+                            else { axisMax = Convert.ToSingle(SplitLine[0]); }
+                            if (SPcheckbox.Checked == true) { chart1.Series[0].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[1])); }
+                            if (PVcheck.Checked == true) { chart1.Series[1].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[2])); }
+                            if (CScheck.Checked == true) { chart1.Series[2].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[3])); }
+                            if (HIcheck.Checked == true) { chart1.Series[3].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[4])); }
+                            if (LOcheck.Checked == true) { chart1.Series[4].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[5])); }
                         }
-                        else { axisMax = Convert.ToSingle(SplitLine[0]); }
-                        if (SPcheckbox.Checked == true) { chart1.Series[0].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[1])); }
-                        if (PVcheck.Checked == true) { chart1.Series[1].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[2])); }
-                        if (CScheck.Checked == true) { chart1.Series[2].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[3])); }
-                        if (HIcheck.Checked == true) { chart1.Series[3].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[4])); }
-                        if (LOcheck.Checked == true) { chart1.Series[4].Points.AddXY(Convert.ToSingle(SplitLine[0]), Convert.ToSingle(SplitLine[5])); }
+
+                        chart1.ChartAreas[0].AxisX.LabelStyle.Format = "#.##";
+                        chart1.Series[0].Color = Color.Blue;
+                        chart1.Series[1].Color = Color.Red;
+                        chart1.Series[2].Color = Color.Brown;
+                        chart1.Series[3].Color = Color.DarkOrange;
+                        chart1.Series[4].Color = Color.DarkTurquoise;
+                        chart1.Series[0].BorderWidth = 5;
+                        chart1.Series[1].BorderWidth = 5;
+                        chart1.Series[2].BorderWidth = 5;
+                        chart1.Series[3].BorderWidth = 5;
+                        chart1.Series[4].BorderWidth = 5;
                     }
-                    
-                    chart1.ChartAreas[0].AxisX.LabelStyle.Format = "#.##";
-                    chart1.Series[0].Color = Color.Blue;
-                    chart1.Series[1].Color = Color.Red;
-                    chart1.Series[2].Color = Color.Brown;
-                    chart1.Series[3].Color = Color.DarkOrange;
-                    chart1.Series[4].Color = Color.DarkTurquoise;
-                    chart1.Series[0].BorderWidth = 5;
-                    chart1.Series[1].BorderWidth = 5;
-                    chart1.Series[2].BorderWidth = 5;
-                    chart1.Series[3].BorderWidth = 5;
-                    chart1.Series[4].BorderWidth = 5;
+                    chart1.ChartAreas[0].AxisX.Maximum = axisMax;
+                    chart1.ChartAreas[0].AxisX.Minimum = axisMin;
+                    chart1.ChartAreas[0].AxisX.Interval = (axisMax-axisMin)/20;
+                    chart1.ResetAutoValues();
                 }
-                chart1.ChartAreas[0].AxisX.Maximum = axisMax;
-                chart1.ChartAreas[0].AxisX.Minimum = axisMin;
-                chart1.ResetAutoValues();
             }
+            catch {; }
 
         }
 

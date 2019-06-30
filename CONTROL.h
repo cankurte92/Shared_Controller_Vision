@@ -12,7 +12,7 @@ class incrementalPID
   float CSo,Do; // state vars
   float SPo,PVo; // input mem
   float S_P,PV,TR,CS; // I/O vars
-  int TS,Fp,Fm,HI,LO; //char
+  int TS,Fp,Fm,HI,LO; //I/O vars
   float DSP,DPV,DP,DI,D,DD,DCS;
   
   int CommMode=0;//Controller Visio Communication Mode 
@@ -38,10 +38,10 @@ class positionalPID
   float CSo; // for locks
   float SPo,PVo; // input mem
   float S_P,PV,TR,CS; // I/O vars
-  char TS,Fp,Fm,HI,LO;
+  int TS,Fp,Fm,HI,LO;//I/O vars
   float DSP,DPV,P,I,D;
   
-  int CommMode=0;//Controller Visio Communication Mode 
+  int CommMode=0;//Controller Vision Communication Mode 
   String inpMsg[50];//incoming message
   String inString;
   char inChar;
